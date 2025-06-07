@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components; 
+@tailwind utilities;
+
+.bg-radial-gradient {
+  background: radial-gradient(circle at 60% 30%, #5d00a8, #000000 80%);
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 60s linear infinite;
+}
