@@ -12,37 +12,37 @@ const QrGenerator = () => {
     {
       name: 'YouTube',
       icon: '▶️',
-      path: '#',
+      path: '/qr-generator/youtube',
       type: 'simple',
     },
     {
       name: 'Email',
       icon: '📧',
-      path: '#',
+      path: '/qr-generator/email',
       type: 'simple',
     },
     {
       name: 'WhatsApp',
       icon: '💬',
-      path: '#',
+      path: '/qr-generator/whatsapp',
       type: 'simple',
     },
     {
       name: 'Location',
       icon: '📍',
-      path: '#',
+      path: '/qr-generator/location',
       type: 'simple',
     },
     {
       name: 'Text',
       icon: '📝',
-      path: '#',
+      path: '/qr-generator/text',
       type: 'simple',
     },
     {
       name: 'Instagram',
       icon: '📸',
-      path: '#',
+      path: '/qr-generator/instagram',
       type: 'simple',
     },
   ];

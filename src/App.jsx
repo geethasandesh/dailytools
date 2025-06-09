@@ -5,6 +5,12 @@ import Home from './pages/Home';
 import Tools from './pages/Tools';
 import QrGenerator from './pages/QrGenerator';
 import UrlQrGenerator from './components/qr-types/UrlQrGenerator';
+import WhatsAppQrGenerator from './components/qr-types/WhatsAppQrGenerator';
+import EmailQrGenerator from './components/qr-types/EmailQrGenerator';
+import YoutubeQrGenerator from './components/qr-types/YoutubeQrGenerator';
+import LocationQrGenerator from './components/qr-types/LocationQrGenerator';
+import TextQrGenerator from './components/qr-types/TextQrGenerator';
+import InstagramQrGenerator from './components/qr-types/InstagramQrGenerator';
 import GradientGenerator from './pages/GradientGenerator';
 import ImageBackgroundRemover from './pages/ImageBackgroundRemover';
 import VideoToMp3 from './pages/VideoToMp3';
@@ -31,6 +37,12 @@ const App = () => {
             <Route path="/tools" element={<Tools />} />
             <Route path="/qr-generator" element={<QrGenerator />} />
             <Route path="/qr-generator/url" element={<UrlQrGenerator />} />
+            <Route path="/qr-generator/whatsapp" element={<WhatsAppQrGenerator />} />
+            <Route path="/qr-generator/youtube" element={<YoutubeQrGenerator />} />
+            <Route path="/qr-generator/email" element={<EmailQrGenerator />} />
+            <Route path="/qr-generator/location" element={<LocationQrGenerator />} />
+            <Route path="/qr-generator/text" element={<TextQrGenerator />} />
+            <Route path="/qr-generator/instagram" element={<InstagramQrGenerator />} />
             <Route path="/gradient-generator" element={<GradientGenerator />} />
             <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
             <Route path="/video-to-mp3" element={<VideoToMp3 />} />
