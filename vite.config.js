@@ -11,11 +11,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util', '@ffmpeg/core', 'worker.js'],
+    exclude: ['worker.js'],
   },
   build: {
     rollupOptions: {
-      external: ['@ffmpeg/ffmpeg', '@ffmpeg/util', '@ffmpeg/core'],
+      external: [],
     },
   },
 })

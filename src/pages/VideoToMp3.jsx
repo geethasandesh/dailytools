@@ -1,6 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 const VideoToMp3 = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -17,6 +15,9 @@ const VideoToMp3 = () => {
     }
     console.log('Attempting to load FFmpeg...');
     try {
+      // Dynamically import FFmpeg and utils
+      const { FFmpeg } = await import('@ffmpeg/ffmpeg');
+      const { fetchFile, toBlobURL } = await import('@ffmpeg/util');
       const ffmpeg = ffmpegRef.current = new FFmpeg();
       ffmpeg.on('log', ({ message }) => {
         console.log('[FFmpeg log]', message);
@@ -25,7 +26,6 @@ const VideoToMp3 = () => {
         setProgress(Math.round(progress * 100));
         console.log('[FFmpeg progress]', Math.round(progress * 100) + '%');
       });
-
       const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
       console.log('Loading FFmpeg core from:', baseURL);
       await ffmpeg.load({
@@ -68,6 +68,8 @@ const VideoToMp3 = () => {
         return;
       }
 
+      // Dynamically import fetchFile here as well (for safety)
+      const { fetchFile } = await import('@ffmpeg/util');
       console.log('Writing file to FFmpeg virtual file system...');
       await ffmpegRef.current.writeFile('input.mp4', await fetchFile(selectedFile));
       console.log('File written. Executing FFmpeg command...');
