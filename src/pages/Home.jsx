@@ -16,7 +16,7 @@ const Home = () => {
         {/* Left Section - Text Content */}
         <div className="lg:w-1/2 text-white text-center lg:text-left mb-12 lg:mb-0 lg:pr-12 p-4 lg:pl-12">
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-wide">
-            Unlock Top <GlitchText>Daily Tools</GlitchText> <br /> Now Just One <br /> Click Away!
+            Unlock Top  <br /> Daily Tools <br /> One Click Away!
           </h1>
           <p className="text-xl md:text-2xl text-purple-200 mb-8">
             Your complete toolkit for everyday tasks, powered by modern technology.
