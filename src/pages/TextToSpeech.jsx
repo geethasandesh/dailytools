@@ -100,67 +100,35 @@ const voicerssVoices = {
 const TextToSpeech = () => {
   const [text, setText] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  // Browser voices
+  const [browserVoices, setBrowserVoices] = useState([]);
+  const [selectedBrowserVoice, setSelectedBrowserVoice] = useState(null);
+  // VoiceRSS
   const [selectedVoice, setSelectedVoice] = useState({ value: '', label: 'Default' });
   const [voices, setVoices] = useState(voicerssVoices['en-us']);
   const [speechRate, setSpeechRate] = useState(1);
   const [pitch, setPitch] = useState(1);
   const [lang, setLang] = useState(voicerssLanguages.find(l => l.value === 'en-us'));
 
+  // Load browser voices
   useEffect(() => {
-    // Update voices when language changes
-    setVoices(voicerssVoices[lang.value] || [{ value: '', label: 'Default' }]);
-    setSelectedVoice({ value: '', label: 'Default' });
-  }, [lang]);
-
-  React.useEffect(() => {
-    // Get available voices
     const loadVoices = () => {
-      const availableVoices = window.speechSynthesis.getVoices();
-      // Filter for English voices and categorize them
-      const englishVoices = availableVoices.filter(voice => 
-        voice.lang.startsWith('en') || voice.lang.startsWith('en-US')
-      );
-      // Sort voices: female voices first, then male voices
-      const sortedVoices = englishVoices.sort((a, b) => {
-        const aIsFemale = a.name.toLowerCase().includes('female') || 
-                         a.name.toLowerCase().includes('woman') || 
-                         a.name.toLowerCase().includes('girl');
-        const bIsFemale = b.name.toLowerCase().includes('female') || 
-                         b.name.toLowerCase().includes('woman') || 
-                         b.name.toLowerCase().includes('girl');
-        if (aIsFemale && !bIsFemale) return -1;
-        if (!aIsFemale && bIsFemale) return 1;
-        return a.name.localeCompare(b.name);
-      });
-      setVoices(sortedVoices);
-      if (sortedVoices.length > 0) {
-        setSelectedVoice(sortedVoices[0]);
+      const voices = window.speechSynthesis.getVoices();
+      setBrowserVoices(voices);
+      if (voices.length > 0 && !selectedBrowserVoice) {
+        setSelectedBrowserVoice(voices[0]);
       }
     };
     loadVoices();
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    // eslint-disable-next-line
   }, []);
 
-  const speak = () => {
-    if (!text) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-    utterance.rate = speechRate;
-    utterance.pitch = pitch;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const stop = () => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking(false);
-  };
+  // Update VoiceRSS voices when language changes
+  useEffect(() => {
+    setVoices(voicerssVoices[lang.value] || [{ value: '', label: 'Default' }]);
+    setSelectedVoice({ value: '', label: 'Default' });
+  }, [lang]);
 
   const handleDownload = async () => {
     if (!text) return;
@@ -193,6 +161,25 @@ const TextToSpeech = () => {
     }
   };
 
+  const speak = () => {
+    if (!text) return;
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    if (selectedBrowserVoice) {
+      utterance.voice = selectedBrowserVoice;
+    }
+    utterance.rate = speechRate;
+    utterance.pitch = pitch;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stop = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  };
+
   return (
     <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -201,9 +188,16 @@ const TextToSpeech = () => {
         </h1>
         <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
           <div className="space-y-6">
+            {/* Info Note */}
+            <div className="mb-4 p-4 rounded-xl bg-blue-900/60 text-blue-100 border border-blue-400">
+              <b>Note:</b> <br />
+              <span className="block mt-1">Browser playback and downloadable audio may sound different. <br />
+              <b>Playback</b> uses your browser/OS voices. <br />
+              <b>Download</b> uses high-quality cloud voices from VoiceRSS.</span>
+            </div>
             {/* Language Selection */}
             <div className="mb-4">
-              <label className="block text-lg font-semibold text-white mb-2">Select Language</label>
+              <label className="block text-lg font-semibold text-white mb-2">Select Language (for Download)</label>
               <Select
                 options={voicerssLanguages}
                 value={lang}
@@ -219,13 +213,31 @@ const TextToSpeech = () => {
                 }}
               />
             </div>
-            {/* Voice Selection */}
+            {/* VoiceRSS Voice Selection */}
             <div className="mb-4">
-              <label className="block text-lg font-semibold text-white mb-2">Select Voice</label>
+              <label className="block text-lg font-semibold text-white mb-2">Select Download Voice (VoiceRSS)</label>
               <Select
                 options={voices}
                 value={selectedVoice}
                 onChange={setSelectedVoice}
+                classNamePrefix="react-select"
+                isSearchable
+                styles={{
+                  control: (base) => ({ ...base, borderRadius: '1rem', minHeight: '3rem', background: 'rgba(255,255,255,0.1)', borderColor: '#7c3aed', color: 'white' }),
+                  singleValue: (base) => ({ ...base, color: 'white' }),
+                  menu: (base) => ({ ...base, borderRadius: '1rem', background: '#18181b', color: 'white' }),
+                  option: (base, state) => ({ ...base, background: state.isSelected ? '#7c3aed' : state.isFocused ? '#a78bfa' : 'transparent', color: state.isSelected ? 'white' : 'white' }),
+                  input: (base) => ({ ...base, color: 'white' }),
+                }}
+              />
+            </div>
+            {/* Browser Voice Selection */}
+            <div className="mb-4">
+              <label className="block text-lg font-semibold text-white mb-2">Select Playback Voice (Browser/OS)</label>
+              <Select
+                options={browserVoices.map(v => ({ value: v.voiceURI, label: `${v.name} (${v.lang})`, voice: v }))}
+                value={browserVoices.length ? { value: selectedBrowserVoice?.voiceURI, label: `${selectedBrowserVoice?.name} (${selectedBrowserVoice?.lang})`, voice: selectedBrowserVoice } : null}
+                onChange={opt => setSelectedBrowserVoice(opt.voice)}
                 classNamePrefix="react-select"
                 isSearchable
                 styles={{
@@ -345,7 +357,8 @@ const TextToSpeech = () => {
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">🗣️</span>
                   <div>
-                    <p className="text-white font-medium">{selectedVoice.label}</p>
+                    <p className="text-white font-medium">Download voice: {selectedVoice.label}</p>
+                    <p className="text-white font-medium">Playback voice: {selectedBrowserVoice ? `${selectedBrowserVoice.name} (${selectedBrowserVoice.lang})` : 'Default'}</p>
                     <p className="text-sm text-gray-400">Language: {lang.label}</p>
                   </div>
                 </div>
