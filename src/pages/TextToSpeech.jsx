@@ -230,6 +230,10 @@ const TextToSpeech = () => {
                   input: (base) => ({ ...base, color: 'white' }),
                 }}
               />
+              <p className="text-xs text-gray-400 mt-1">
+                VoiceRSS language/voice list is static. Last updated: June 2024.<br />
+                <a href="https://www.voicerss.org/api/documentation.aspx" target="_blank" rel="noopener noreferrer" className="underline text-blue-300">Check for updates in the VoiceRSS documentation</a>
+              </p>
             </div>
             {/* Browser Voice Selection */}
             <div className="mb-4">
