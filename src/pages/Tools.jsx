@@ -12,11 +12,9 @@ const Tools = () => {
     { name: 'PDF to Word', path: '/pdf-to-word', icon: '📄', description: 'Convert PDF documents to editable Word files.' },
     { name: 'Resume Builder', path: '/resume-builder', icon: '📝', description: 'Create professional resumes quickly and easily.' },
     { name: 'Text to Speech', path: '/text-to-speech', icon: '🔊', description: 'Convert text into natural-sounding speech.' },
-    { name: 'Speech to Text', path: '/speech-to-text', icon: '🎤', description: 'Transcribe spoken words into text.' },
     { name: 'Code Formatter', path: '/code-formatter', icon: '💻', description: 'Format code for various programming languages.' },
     { name: 'Color Palette Generator', path: '/color-palette-generator', icon: '🎨', description: 'Generate beautiful color palettes for your designs.' },
     { name: 'Unit Converter', path: '/unit-converter', icon: '📏', description: 'Convert between different units of measurement.' },
-    { name: 'Todo List', path: '/todo-list', icon: '✅', description: 'Manage your tasks and stay organized.' },
   ];
 
   return (

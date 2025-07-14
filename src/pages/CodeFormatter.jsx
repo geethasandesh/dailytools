@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
+import prettier from 'prettier/standalone';
+import parserBabel from 'prettier/parser-babel';
+import parserHtml from 'prettier/parser-html';
+import parserPostcss from 'prettier/parser-postcss';
+import beautify from 'js-beautify';
+import vkbeautify from 'vkbeautify';
+import DiffViewer from 'react-diff-viewer';
 
 const CodeFormatter = () => {
+  const [tab, setTab] = useState('format');
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('javascript');
   const [formattedCode, setFormattedCode] = useState('');
+  const [error, setError] = useState('');
+  // For compare
+  const [codeA, setCodeA] = useState('');
+  const [codeB, setCodeB] = useState('');
+  const [compareLang, setCompareLang] = useState('javascript');
+  const [diffError, setDiffError] = useState('');
 
   const languages = [
     { id: 'javascript', name: 'JavaScript' },
@@ -14,79 +28,269 @@ const CodeFormatter = () => {
     { id: 'xml', name: 'XML' },
   ];
 
+  const handleFormat = async () => {
+    setError('');
+    try {
+      let formatted = '';
+      if (language === 'javascript') {
+        formatted = await prettier.format(code, {
+          parser: 'babel',
+          plugins: [parserBabel],
+        });
+      } else if (language === 'json') {
+        formatted = await prettier.format(code, {
+          parser: 'json',
+          plugins: [parserBabel],
+        });
+      } else if (language === 'html') {
+        formatted = await prettier.format(code, {
+          parser: 'html',
+          plugins: [parserHtml],
+        });
+      } else if (language === 'css') {
+        formatted = await prettier.format(code, {
+          parser: 'css',
+          plugins: [parserPostcss],
+        });
+      } else if (language === 'python') {
+        formatted = beautify.js_beautify(code, { indent_size: 4 });
+      } else if (language === 'xml') {
+        formatted = vkbeautify.xml(code, 2);
+      } else {
+        formatted = code;
+      }
+      setFormattedCode(formatted);
+    } catch (err) {
+      setError('Formatting failed: ' + err.message);
+      setFormattedCode('');
+    }
+  };
+
+  const handleCompare = async () => {
+    setDiffError('');
+    try {
+      let a = codeA;
+      let b = codeB;
+      if (compareLang === 'javascript') {
+        a = await prettier.format(codeA, { parser: 'babel', plugins: [parserBabel] });
+        b = await prettier.format(codeB, { parser: 'babel', plugins: [parserBabel] });
+      } else if (compareLang === 'json') {
+        a = await prettier.format(codeA, { parser: 'json', plugins: [parserBabel] });
+        b = await prettier.format(codeB, { parser: 'json', plugins: [parserBabel] });
+      } else if (compareLang === 'html') {
+        a = await prettier.format(codeA, { parser: 'html', plugins: [parserHtml] });
+        b = await prettier.format(codeB, { parser: 'html', plugins: [parserHtml] });
+      } else if (compareLang === 'css') {
+        a = await prettier.format(codeA, { parser: 'css', plugins: [parserPostcss] });
+        b = await prettier.format(codeB, { parser: 'css', plugins: [parserPostcss] });
+      } else if (compareLang === 'python') {
+        a = beautify.js_beautify(codeA, { indent_size: 4 });
+        b = beautify.js_beautify(codeB, { indent_size: 4 });
+      } else if (compareLang === 'xml') {
+        a = vkbeautify.xml(codeA, 2);
+        b = vkbeautify.xml(codeB, 2);
+      }
+      setCodeA(a);
+      setCodeB(b);
+    } catch (err) {
+      setDiffError('Formatting failed: ' + err.message);
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Code Formatter</h1>
-      
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Language
-          </label>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {languages.map((lang) => (
-              <option key={lang.id} value={lang.id}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Your Code
-          </label>
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="w-full h-64 p-3 font-mono text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Paste your code here..."
-          />
-        </div>
-
-        <div className="flex space-x-4">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center text-white mb-12">
+          Code Formatter & Comparison
+        </h1>
+        <div className="mb-8 flex justify-center gap-4">
           <button
-            onClick={() => {
-              // TODO: Implement code formatting
-              setFormattedCode(code);
-            }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className={`px-6 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg ${tab === 'format' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            onClick={() => setTab('format')}
           >
-            Format Code
+            Format
           </button>
           <button
-            onClick={() => {
-              setCode('');
-              setFormattedCode('');
-            }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            className={`px-6 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg ${tab === 'compare' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+            onClick={() => setTab('compare')}
           >
-            Clear
+            Compare
           </button>
         </div>
-
-        {formattedCode && (
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Formatted Code
-            </label>
-            <pre className="w-full p-3 font-mono text-sm bg-gray-50 border border-gray-300 rounded-md overflow-x-auto">
-              {formattedCode}
-            </pre>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(formattedCode);
-              }}
-              className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              Copy to Clipboard
-            </button>
-          </div>
-        )}
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
+          {tab === 'format' && (
+            <>
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-white mb-2">
+                  Select Language
+                </label>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
+                >
+                  {languages.map((lang) => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-white mb-2">
+                  Your Code
+                </label>
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full h-64 p-3 font-mono text-sm border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white placeholder-gray-400"
+                  placeholder="Paste your code here..."
+                />
+              </div>
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleFormat}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 shadow-lg"
+                >
+                  Format Code
+                </button>
+                <button
+                  onClick={() => {
+                    setCode('');
+                    setFormattedCode('');
+                    setError('');
+                  }}
+                  className="px-4 py-2 text-gray-300 hover:text-white"
+                >
+                  Clear
+                </button>
+              </div>
+              {error && (
+                <div className="mt-4 text-red-400 font-semibold">
+                  {error}
+                </div>
+              )}
+              {formattedCode && !error && (
+                <div className="mt-6">
+                  <label className="block text-lg font-semibold text-white mb-2">
+                    Formatted Code
+                  </label>
+                  <pre className="w-full p-3 font-mono text-sm bg-white/5 border border-blue-400/50 rounded-xl overflow-x-auto text-white">
+                    {formattedCode}
+                  </pre>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(formattedCode);
+                    }}
+                    className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700"
+                  >
+                    Copy to Clipboard
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+          {tab === 'compare' && (
+            <>
+              <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-lg font-semibold text-white mb-2">
+                    Code A
+                  </label>
+                  <textarea
+                    value={codeA}
+                    onChange={(e) => setCodeA(e.target.value)}
+                    className="w-full h-64 p-3 font-mono text-sm border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white placeholder-gray-400"
+                    placeholder="Paste first code here..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-lg font-semibold text-white mb-2">
+                    Code B
+                  </label>
+                  <textarea
+                    value={codeB}
+                    onChange={(e) => setCodeB(e.target.value)}
+                    className="w-full h-64 p-3 font-mono text-sm border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white placeholder-gray-400"
+                    placeholder="Paste second code here..."
+                  />
+                </div>
+              </div>
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-white mb-2">
+                  Select Language
+                </label>
+                <select
+                  value={compareLang}
+                  onChange={(e) => setCompareLang(e.target.value)}
+                  className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
+                >
+                  {languages.map((lang) => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex space-x-4 mb-6">
+                <button
+                  onClick={handleCompare}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 shadow-lg"
+                >
+                  Compare Code
+                </button>
+                <button
+                  onClick={() => {
+                    setCodeA('');
+                    setCodeB('');
+                    setDiffError('');
+                  }}
+                  className="px-4 py-2 text-gray-300 hover:text-white"
+                >
+                  Clear
+                </button>
+              </div>
+              {diffError && (
+                <div className="mt-4 text-red-400 font-semibold">
+                  {diffError}
+                </div>
+              )}
+              <div className="mt-6">
+                <label className="block text-lg font-semibold text-white mb-2">
+                  Code Difference
+                </label>
+                <div className="rounded-xl overflow-x-auto bg-white/5 border border-blue-400/50">
+                  <DiffViewer
+                    oldValue={codeA}
+                    newValue={codeB}
+                    splitView={true}
+                    showDiffOnly={false}
+                    leftTitle="Code A"
+                    rightTitle="Code B"
+                    styles={{
+                      variables: {
+                        light: {
+                          diffViewerBackground: '#f3f4f6',
+                          addedBackground: '#bbf7d0',
+                          removedBackground: '#fecaca',
+                        },
+                        dark: {
+                          diffViewerBackground: '#18181b',
+                          addedBackground: '#166534',
+                          removedBackground: '#7f1d1d',
+                        },
+                      },
+                      diffContainer: { background: 'transparent' },
+                      lineNumber: { color: '#a5b4fc' },
+                      contentText: { color: '#fff' },
+                      gutter: { background: 'transparent' },
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

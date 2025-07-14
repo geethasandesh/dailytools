@@ -12,11 +12,9 @@ const Footer = () => {
     { name: 'PDF to Word', path: '/pdf-to-word' },
     { name: 'Resume Builder', path: '/resume-builder' },
     { name: 'Text to Speech', path: '/text-to-speech' },
-    { name: 'Speech to Text', path: '/speech-to-text' },
     { name: 'Code Formatter', path: '/code-formatter' },
     { name: 'Color Palette Generator', path: '/color-palette-generator' },
     { name: 'Unit Converter', path: '/unit-converter' },
-    { name: 'Todo List', path: '/todo-list' },
   ];
 
   return (

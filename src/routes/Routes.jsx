@@ -17,13 +17,11 @@ import PdfToWord from '../pages/PdfToWord';
 import YtToMp3 from '../pages/YtToMp3';
 import ReelsDownloader from '../pages/ReelsDownloader';
 import TextToSpeech from '../pages/TextToSpeech';
-import SpeechToText from '../pages/SpeechToText';
 import ImageCompressor from '../pages/ImageCompressor';
 import CodeFormatter from '../pages/CodeFormatter';
 import ColorPaletteGenerator from '../pages/ColorPaletteGenerator';
 import UnitConverter from '../pages/UnitConverter';
 import ResumeBuilder from '../pages/ResumeBuilder';
-import TodoList from '../pages/TodoList';
 
 const AppRoutes = () => {
   return (
@@ -45,13 +43,11 @@ const AppRoutes = () => {
       <Route path="/yt-to-mp3" element={<YtToMp3 />} />
       <Route path="/reels-downloader" element={<ReelsDownloader />} />
       <Route path="/text-to-speech" element={<TextToSpeech />} />
-      <Route path="/speech-to-text" element={<SpeechToText />} />
       <Route path="/image-compressor" element={<ImageCompressor />} />
       <Route path="/code-formatter" element={<CodeFormatter />} />
-      <Route path="/color-palette" element={<ColorPaletteGenerator />} />
+      <Route path="/color-palette-generator" element={<ColorPaletteGenerator />} />
       <Route path="/unit-converter" element={<UnitConverter />} />
       <Route path="/resume-builder" element={<ResumeBuilder />} />
-      <Route path="/todo-list" element={<TodoList />} />
     </Routes>
   );
 };
