@@ -1,342 +1,376 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { removeBackground } from '@imgly/background-removal';
+import Select from 'react-select';
+
+// Custom styles for react-select to make it transparent
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'transparent',
+    border: '1px solid rgb(147 197 253)', // border-blue-300
+    borderRadius: '8px',
+    boxShadow: state.isFocused ? '0 0 0 2px rgb(59 130 246)' : 'none', // focus:ring-blue-500
+    '&:hover': {
+      border: '1px solid rgb(147 197 253)',
+    },
+    backdropFilter: 'blur(4px)',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(147, 197, 253, 0.5)',
+    borderRadius: '8px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected 
+      ? 'rgba(59, 130, 246, 0.9)' 
+      : state.isFocused 
+        ? 'rgba(59, 130, 246, 0.5)' 
+        : 'transparent',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'rgba(255, 255, 255, 0.7)',
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(147, 197, 253, 0.5)',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: 'rgba(147, 197, 253, 0.8)',
+    '&:hover': {
+      color: 'rgb(147, 197, 253)',
+    },
+  }),
+};
 
 const ImageBackgroundRemover = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [processedImage, setProcessedImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState('');
-  const [elapsed, setElapsed] = useState(0);
-  const [useBackend, setUseBackend] = useState(true);
-  const [selectedModel, setSelectedModel] = useState('u2net');
-  const [advancedSettings, setAdvancedSettings] = useState({
-    postProcess: true,
-    alphaMatting: false,
-    alphaMattingForegroundThreshold: 240,
-    alphaMattingBackgroundThreshold: 10,
-    alphaMattingErodeSize: 10
-  });
-  const [availableModels, setAvailableModels] = useState({});
-  const [processingMethod, setProcessingMethod] = useState('backend'); // 'backend' or 'client'
-  const timerRef = useRef();
+  const [error, setError] = useState(null);
+  const [modelType, setModelType] = useState('modnet');
+  const [outputFormat, setOutputFormat] = useState('png');
+  const [quality, setQuality] = useState(0.9);
+  const fileInputRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  // Available models for client-side processing (@imgly/background-removal)
-  const clientModels = {
-    'isnet': 'General Purpose',
-    'isnet_fp16': 'Fast Processing',
-    'isnet_quint8': 'Optimized Processing'
-  };
+  const modelOptions = [
+    { value: 'modnet', label: 'MODNet (Recommended)' },
+    { value: 'modnet_photographic', label: 'MODNet Photographic' },
+    { value: 'modnet_webcam', label: 'MODNet Webcam' },
+  ];
 
-  // Model mapping for backend (rembg) to client-side conversion
-  const modelMapping = {
-    'u2net': 'isnet',
-    'u2net_human_seg': 'isnet',
-    'u2net_cloth_seg': 'isnet',
-    'silueta': 'isnet_fp16',
-    'isnet-general-use': 'isnet',
-    'isnet-anime': 'isnet'
-  };
+  const formatOptions = [
+    { value: 'png', label: 'PNG (Transparent)' },
+    { value: 'jpg', label: 'JPG (White Background)' },
+    { value: 'webp', label: 'WebP (Transparent)' },
+  ];
 
-  useEffect(() => {
-    // Fetch available models from backend
-    fetchAvailableModels();
-  }, []);
+  const qualityOptions = [
+    { value: 0.7, label: 'Low (70%)' },
+    { value: 0.8, label: 'Medium (80%)' },
+    { value: 0.9, label: 'High (90%)' },
+    { value: 1.0, label: 'Maximum (100%)' },
+  ];
 
-  const fetchAvailableModels = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/models');
-      if (response.ok) {
-        const data = await response.json();
-        setAvailableModels(data.models || clientModels);
-      }
-    } catch (error) {
-      console.log('Backend not available, using client-side processing');
-      setAvailableModels(clientModels);
-      setUseBackend(false);
-    }
-  };
-
-  const handleImageUpload = (event) => {
+  const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Validate file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        setError('Image size must be less than 10MB');
-        return;
-      }
-
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target.result);
+      if (file.type.startsWith('image/')) {
+        setSelectedFile(file);
         setProcessedImage(null);
-        setError('');
-      };
-      reader.readAsDataURL(file);
+        setError(null);
+      } else {
+        setError('Please select a valid image file.');
+      }
     }
   };
 
-  const processWithBackend = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('model', selectedModel);
-    formData.append('post_process', advancedSettings.postProcess);
-    formData.append('alpha_matting', advancedSettings.alphaMatting);
-    formData.append('alpha_matting_foreground_threshold', advancedSettings.alphaMattingForegroundThreshold);
-    formData.append('alpha_matting_background_threshold', advancedSettings.alphaMattingBackgroundThreshold);
-    formData.append('alpha_matting_erode_size', advancedSettings.alphaMattingErodeSize);
+  const loadMODNetModel = async () => {
+    try {
+      // For now, we'll use a placeholder for the model loading
+      // In a real implementation, you would load the actual MODNet model
+      console.log('Loading MODNet model...');
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate model loading
+      return true;
+    } catch (error) {
+      console.error('Error loading MODNet model:', error);
+      return false;
+    }
+  };
 
-    const response = await fetch('http://127.0.0.1:8000/api/v1/remove-background', {
+  const processImage = async () => {
+    if (!selectedFile) {
+      setError('Please select an image first.');
+        return;
+      }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // Create FormData for file upload
+    const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      // Send to backend API
+      const response = await fetch('http://localhost:8000/remove-background', {
       method: 'POST',
       body: formData,
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Backend processing failed');
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+      // Get the processed image blob
     const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  };
+      const url = URL.createObjectURL(blob);
+      setProcessedImage(url);
+      setIsProcessing(false);
 
-  const processWithClient = async (imageElement) => {
-    const result = await removeBackground(imageElement, {
-      model: selectedModel,
-      output: {
-        format: 'image/png',
-        quality: 0.8
-      }
-    });
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = result.width;
-    canvas.height = result.height;
-    const ctx = canvas.getContext('2d');
-    ctx.putImageData(result, 0, 0);
-    return canvas.toDataURL('image/png');
-  };
-
-  const handleRemoveBackground = async () => {
-    if (!selectedImage) return;
-    
-    setIsProcessing(true);
-    setError('');
-    setProcessedImage(null);
-    setElapsed(0);
-    
-    timerRef.current = setInterval(() => {
-      setElapsed((prev) => prev + 1);
-    }, 1000);
-
-    try {
-      let result;
-      
-      if (processingMethod === 'backend' && useBackend) {
-        // Convert data URL to file for backend
-        const response = await fetch(selectedImage);
-        const blob = await response.blob();
-        const file = new File([blob], 'image.png', { type: 'image/png' });
-        result = await processWithBackend(file);
-      } else {
-        // Client-side processing
-        const img = new window.Image();
-        img.crossOrigin = 'anonymous';
-        img.src = selectedImage;
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-        result = await processWithClient(img);
-      }
-      
-      setProcessedImage(result);
-    } catch (e) {
-      console.error('Processing error:', e);
-      setError(`Failed to remove background: ${e.message}. Try a different image or processing method.`);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setError('Error processing image. Please make sure the backend server is running.');
+      setIsProcessing(false);
     }
-    
-    clearInterval(timerRef.current);
-    setIsProcessing(false);
   };
 
-  const handleDownload = () => {
+  const simulateMODNetProcessing = async (imageData) => {
+    // This is a placeholder for actual MODNet processing
+    // In a real implementation, you would use the actual MODNet model
+    
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const { data, width, height } = imageData;
+        const newData = new Uint8ClampedArray(data);
+        
+        // Simple edge detection simulation (not actual MODNet)
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // Simple brightness-based alpha calculation
+          const brightness = (r + g + b) / 3;
+          const alpha = brightness > 200 ? 0 : 255; // Simple threshold
+          
+          newData[i] = r;
+          newData[i + 1] = g;
+          newData[i + 2] = b;
+          newData[i + 3] = alpha;
+        }
+        
+        const processedImageData = new ImageData(newData, width, height);
+        resolve(processedImageData);
+      }, 2000); // Simulate processing time
+    });
+  };
+
+  const downloadImage = () => {
     if (processedImage) {
       const link = document.createElement('a');
       link.href = processedImage;
-      link.download = 'background-removed.png';
+      link.download = `background_removed.${outputFormat}`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     }
   };
 
-  const handleAdvancedSettingsChange = (setting, value) => {
-    setAdvancedSettings(prev => ({
-      ...prev,
-      [setting]: value
-    }));
-  };
-
-  React.useEffect(() => {
-    if (!isProcessing) {
-      clearInterval(timerRef.current);
-      setElapsed(0);
+  const resetImage = () => {
+    setSelectedFile(null);
+    setProcessedImage(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
-  }, [isProcessing]);
+  };
 
   return (
-    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-white mb-12">Image Background Remover</h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Processing Area */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
-              <div className="mb-6">
-                <label className="block text-lg font-semibold text-white mb-2">Upload Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 bg-white/5 border border-blue-400/50 rounded-xl"
-                />
-              </div>
+    <div className="min-h-screen bg-radial-gradient py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-extrabold text-white mb-4">Image Background Remover</h1>
+          <p className="text-xl text-gray-300">Remove backgrounds from images using advanced AI models</p>
+        </div>
 
-              {selectedImage && (
-                <div className="mb-6">
-                  <h2 className="text-lg font-medium text-white mb-2">Preview</h2>
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
+          {/* Settings Panel */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
+              <label className="block text-lg font-medium text-white mb-3">Model Type</label>
+              <Select
+                options={modelOptions}
+                value={{ value: modelType, label: modelOptions.find(opt => opt.value === modelType)?.label }}
+                onChange={(selectedOption) => setModelType(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select model"
+                isSearchable={false}
+                isClearable={false}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-lg font-medium text-white mb-3">Output Format</label>
+              <Select
+                options={formatOptions}
+                value={{ value: outputFormat, label: formatOptions.find(opt => opt.value === outputFormat)?.label }}
+                onChange={(selectedOption) => setOutputFormat(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select format"
+                isSearchable={false}
+                isClearable={false}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-lg font-medium text-white mb-3">Quality</label>
+              <Select
+                options={qualityOptions}
+                value={{ value: quality, label: qualityOptions.find(opt => opt.value === quality)?.label }}
+                onChange={(selectedOption) => setQuality(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select quality"
+                isSearchable={false}
+                isClearable={false}
+              />
+            </div>
+          </div>
+
+          {/* File Upload */}
+          <div className="mb-8">
+            <label className="block text-lg font-medium text-white mb-3">Upload Image</label>
+            <div className="flex items-center justify-center w-full">
+              <label className="flex flex-col items-center justify-center w-full h-80 border-2 border-blue-300 border-dashed rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg className="w-16 h-16 mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <p className="mb-2 text-lg text-gray-300">Click to upload or drag and drop</p>
+                  <p className="text-sm text-gray-400">Supports: JPG, PNG, WebP (Max 10MB)</p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Selected File Info */}
+          {selectedFile && (
+            <div className="bg-white/5 p-6 rounded-xl mb-6">
+              <h3 className="text-lg font-medium text-white mb-3">Selected File</h3>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">{selectedFile.name}</span>
+                <span className="text-sm text-gray-400">
+                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Error Display */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-xl text-red-300">
+              {error}
+                </div>
+              )}
+
+          {/* Processing Status */}
+              {isProcessing && (
+            <div className="mb-6 p-4 bg-blue-500/20 border border-blue-500 rounded-xl text-blue-300">
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-300 mr-3"></div>
+                Processing image with MODNet model...
+              </div>
+                </div>
+              )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 mb-8">
+            <button
+              onClick={processImage}
+              disabled={!selectedFile || isProcessing}
+              className={`px-8 py-3 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg ${
+                !selectedFile || isProcessing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+              }`}
+            >
+              {isProcessing ? 'Processing...' : 'Remove Background'}
+            </button>
+            
+            {processedImage && (
+              <button
+                onClick={downloadImage}
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:scale-105"
+              >
+                Download Result
+              </button>
+            )}
+            
+            <button
+              onClick={resetImage}
+              className="px-8 py-3 bg-gray-600 hover:bg-gray-700 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:scale-105"
+            >
+              Reset
+            </button>
+          </div>
+
+          {/* Image Preview */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {selectedFile && (
+              <div>
+                <h3 className="text-lg font-medium text-white mb-4">Original Image</h3>
+                <div className="bg-white/5 rounded-xl p-4">
                   <img
-                    src={selectedImage}
-                    alt="Selected"
-                    className="max-w-full h-auto rounded-xl border border-blue-400/50 bg-white/10"
-                    style={{ maxHeight: 320 }}
+                    src={URL.createObjectURL(selectedFile)}
+                    alt="Original"
+                    className="w-full h-auto rounded-lg"
                   />
                 </div>
-              )}
-
-              {isProcessing && (
-                <div className="flex flex-col items-center mb-4">
-                  <svg className="animate-spin h-10 w-10 text-blue-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                  </svg>
-                  <span className="text-blue-200 font-medium">Processing... {elapsed}s</span>
-                </div>
-              )}
-
-              <button
-                onClick={handleRemoveBackground}
-                disabled={!selectedImage || isProcessing}
-                className={`w-full mt-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl font-semibold text-lg shadow-lg transition-all duration-300 hover:from-purple-700 hover:to-blue-700 ${!selectedImage || isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {isProcessing ? 'Processing...' : 'Remove Background'}
-              </button>
-
-              {error && (
-                <div className="mt-6 p-4 bg-red-900/60 text-red-200 rounded-xl border border-red-400">
-                  {error}
                 </div>
               )}
 
               {processedImage && (
-                <div className="mt-8">
-                  <h2 className="text-lg font-medium text-white mb-2">Result</h2>
+              <div>
+                <h3 className="text-lg font-medium text-white mb-4">Processed Image</h3>
+                <div className="bg-white/5 rounded-xl p-4">
                   <img
                     src={processedImage}
                     alt="Processed"
-                    className="max-w-full h-auto rounded-xl border border-green-400/50 bg-white/10"
-                    style={{ maxHeight: 320 }}
+                    className="w-full h-auto rounded-lg"
                   />
-                  <button
-                    onClick={handleDownload}
-                    className="mt-4 px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 shadow-lg"
-                  >
-                    Download
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Settings Panel */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-blue-400">
-              <h3 className="text-xl font-semibold text-white mb-4">Settings</h3>
-              
-              {/* Processing Method */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">Processing Method</label>
-                <select
-                  value={processingMethod}
-                  onChange={(e) => setProcessingMethod(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/5 border border-blue-400/50 rounded-lg text-white"
-                >
-                  <option value="backend">Backend (Recommended)</option>
-                  <option value="client">Client-side</option>
-                </select>
-              </div>
-
-              {/* Model Selection */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">AI Model</label>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/5 border border-blue-400/50 rounded-lg text-white"
-                >
-                  {Object.entries(availableModels).map(([key, description]) => (
-                    <option key={key} value={key}>{description}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Advanced Settings */}
-              <div className="mb-6">
-                <h4 className="text-sm font-medium text-white mb-3">Advanced Settings</h4>
-                
-                <div className="space-y-3">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={advancedSettings.postProcess}
-                      onChange={(e) => handleAdvancedSettingsChange('postProcess', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-white">Post-process mask</span>
-                  </label>
-                  
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={advancedSettings.alphaMatting}
-                      onChange={(e) => handleAdvancedSettingsChange('alphaMatting', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-white">Alpha matting</span>
-                  </label>
                 </div>
               </div>
-
-              {/* Model Recommendations */}
-              <div className="bg-blue-900/30 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-blue-200 mb-2">Model Recommendations</h4>
-                <ul className="text-xs text-blue-100 space-y-1">
-                  <li>• <strong>u2net:</strong> General purpose, best overall</li>
-                  <li>• <strong>u2net_human_seg:</strong> Human portraits</li>
-                  <li>• <strong>u2net_cloth_seg:</strong> Clothing items</li>
-                  <li>• <strong>isnet-anime:</strong> Anime/cartoon images</li>
-                  <li>• <strong>silueta:</strong> Fast processing</li>
-                </ul>
-              </div>
-            </div>
+            )}
           </div>
+
+          {/* Hidden canvas for processing */}
+          <canvas ref={canvasRef} className="hidden" />
         </div>
-      </div>
+      </div> xx
     </div>
   );
 };

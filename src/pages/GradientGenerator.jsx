@@ -1,6 +1,65 @@
 // src/pages/GradientGenerator.jsx
 
 import React, { useState } from 'react';
+import Select from 'react-select';
+
+// Custom styles for react-select to make it transparent
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'transparent',
+    border: '1px solid rgba(59, 130, 246, 0.5)', // border-blue-400/50
+    borderRadius: '8px',
+    boxShadow: state.isFocused ? '0 0 0 2px rgb(59 130 246)' : 'none', // focus:ring-blue-500
+    '&:hover': {
+      border: '1px solid rgba(59, 130, 246, 0.5)',
+    },
+    backdropFilter: 'blur(4px)',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(59, 130, 246, 0.5)',
+    borderRadius: '8px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected 
+      ? 'rgba(59, 130, 246, 0.9)' 
+      : state.isFocused 
+        ? 'rgba(59, 130, 246, 0.5)' 
+        : 'transparent',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'rgba(255, 255, 255, 0.7)',
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: 'rgba(59, 130, 246, 0.8)',
+    '&:hover': {
+      color: 'rgb(59, 130, 246)',
+    },
+  }),
+};
 
 export default function GradientGenerator() {
   const [color1, setColor1] = useState('#ff0000');
@@ -31,17 +90,22 @@ export default function GradientGenerator() {
 
       <label className="block mb-4">
         Direction:
-        <select
-          className="ml-2 p-1 border rounded"
-          value={direction}
-          onChange={e => setDirection(e.target.value)}
-        >
-          <option value="to right">Right</option>
-          <option value="to left">Left</option>
-          <option value="to bottom">Down</option>
-          <option value="to top">Up</option>
-          <option value="45deg">Diagonal (45°)</option>
-        </select>
+        <Select
+          options={[
+            { value: 'to right', label: 'Horizontal' },
+            { value: 'to bottom', label: 'Vertical' },
+            { value: '45deg', label: 'Diagonal' },
+            { value: 'to top right', label: 'Top Right' },
+            { value: 'to bottom right', label: 'Bottom Right' },
+          ]}
+          value={{ value: direction, label: direction === 'to right' ? 'Horizontal' : direction === 'to bottom' ? 'Vertical' : direction === '45deg' ? 'Diagonal' : direction === 'to top right' ? 'Top Right' : 'Bottom Right' }}
+          onChange={(selectedOption) => setDirection(selectedOption.value)}
+          styles={customSelectStyles}
+          placeholder="Select direction"
+          isSearchable={false}
+          isClearable={false}
+          className="ml-2"
+        />
       </label>
 
       <div style={gradientStyle}></div>

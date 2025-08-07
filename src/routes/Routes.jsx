@@ -11,17 +11,13 @@ import LocationQrGenerator from '../components/qr-types/LocationQrGenerator';
 import TextQrGenerator from '../components/qr-types/TextQrGenerator';
 import InstagramQrGenerator from '../components/qr-types/InstagramQrGenerator';
 import GradientGenerator from '../pages/GradientGenerator';
-import ImageBackgroundRemover from '../pages/ImageBackgroundRemover';
 import VideoToMp3 from '../pages/VideoToMp3';
 import PdfToWord from '../pages/PdfToWord';
-import YtToMp3 from '../pages/YtToMp3';
-import ReelsDownloader from '../pages/ReelsDownloader';
-import TextToSpeech from '../pages/TextToSpeech';
+import ImageBackgroundRemover from '../pages/ImageBackgroundRemover';
 import ImageCompressor from '../pages/ImageCompressor';
 import CodeFormatter from '../pages/CodeFormatter';
 import ColorPaletteGenerator from '../pages/ColorPaletteGenerator';
 import UnitConverter from '../pages/UnitConverter';
-import ResumeBuilder from '../pages/ResumeBuilder';
 
 const AppRoutes = () => {
   return (
@@ -37,17 +33,13 @@ const AppRoutes = () => {
       <Route path="/qr-generator/text" element={<TextQrGenerator />} />
       <Route path="/qr-generator/instagram" element={<InstagramQrGenerator />} />
       <Route path="/gradient-generator" element={<GradientGenerator />} />
-      <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
       <Route path="/video-to-mp3" element={<VideoToMp3 />} />
       <Route path="/pdf-to-word" element={<PdfToWord />} />
-      <Route path="/yt-to-mp3" element={<YtToMp3 />} />
-      <Route path="/reels-downloader" element={<ReelsDownloader />} />
-      <Route path="/text-to-speech" element={<TextToSpeech />} />
+      <Route path="/image-background-remover" element={<ImageBackgroundRemover />} />
       <Route path="/image-compressor" element={<ImageCompressor />} />
       <Route path="/code-formatter" element={<CodeFormatter />} />
       <Route path="/color-palette-generator" element={<ColorPaletteGenerator />} />
       <Route path="/unit-converter" element={<UnitConverter />} />
-      <Route path="/resume-builder" element={<ResumeBuilder />} />
     </Routes>
   );
 };

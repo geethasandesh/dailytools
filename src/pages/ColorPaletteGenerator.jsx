@@ -1,5 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import chroma from 'chroma-js';
+import Select from 'react-select';
+
+// Custom styles for react-select to make it transparent
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'transparent',
+    border: '1px solid rgba(59, 130, 246, 0.5)', // border-blue-400/50
+    borderRadius: '12px',
+    boxShadow: state.isFocused ? '0 0 0 2px rgb(59 130 246)' : 'none', // focus:ring-blue-500
+    '&:hover': {
+      border: '1px solid rgba(59, 130, 246, 0.5)',
+    },
+    backdropFilter: 'blur(4px)',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(59, 130, 246, 0.5)',
+    borderRadius: '12px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected 
+      ? 'rgba(59, 130, 246, 0.9)' 
+      : state.isFocused 
+        ? 'rgba(59, 130, 246, 0.5)' 
+        : 'transparent',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'rgba(255, 255, 255, 0.7)',
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: 'rgba(59, 130, 246, 0.8)',
+    '&:hover': {
+      color: 'rgb(59, 130, 246)',
+    },
+  }),
+};
 
 const paletteTypes = [
   { id: 'complementary', name: 'Complementary' },
@@ -122,15 +181,22 @@ const ColorPaletteGenerator = () => {
             </div>
             <div>
               <label className="block text-lg font-semibold text-white mb-2">Palette Type</label>
-              <select
-                value={paletteType}
-                onChange={e => setPaletteType(e.target.value)}
-                className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
-              >
-                {paletteTypes.map(type => (
-                  <option key={type.id} value={type.id}>{type.name}</option>
-                ))}
-              </select>
+              <Select
+                options={[
+                  { value: 'monochromatic', label: 'Monochromatic' },
+                  { value: 'analogous', label: 'Analogous' },
+                  { value: 'complementary', label: 'Complementary' },
+                  { value: 'triadic', label: 'Triadic' },
+                  { value: 'tetradic', label: 'Tetradic' },
+                  { value: 'split-complementary', label: 'Split Complementary' },
+                ]}
+                value={{ value: paletteType, label: paletteType.charAt(0).toUpperCase() + paletteType.slice(1).replace('-', ' ') }}
+                onChange={(selectedOption) => setPaletteType(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select palette type"
+                isSearchable={false}
+                isClearable={false}
+              />
             </div>
           </div>
           <div className="mb-6">
@@ -192,15 +258,19 @@ const ColorPaletteGenerator = () => {
               <h2 className="text-2xl font-bold text-white mb-4">Gradient Generator</h2>
               <div className="mb-4">
                 <label className="block text-lg font-semibold text-white mb-2">Gradient Type</label>
-                <select
-                  value={gradientType}
-                  onChange={e => setGradientType(e.target.value)}
-                  className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
-                >
-                  {gradientTypes.map(type => (
-                    <option key={type.id} value={type.id}>{type.name}</option>
-                  ))}
-                </select>
+                <Select
+                  options={[
+                    { value: 'linear', label: 'Linear' },
+                    { value: 'radial', label: 'Radial' },
+                    { value: 'conic', label: 'Conic' },
+                  ]}
+                  value={{ value: gradientType, label: gradientType.charAt(0).toUpperCase() + gradientType.slice(1) }}
+                  onChange={(selectedOption) => setGradientType(selectedOption.value)}
+                  styles={customSelectStyles}
+                  placeholder="Select gradient type"
+                  isSearchable={false}
+                  isClearable={false}
+                />
               </div>
               <div className="w-full h-32 rounded-2xl border-2 border-blue-400 mb-4" style={{ background: gradient }} />
               <div className="flex items-center space-x-4">

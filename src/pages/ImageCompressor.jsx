@@ -1,5 +1,64 @@
 import React, { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
+import Select from 'react-select';
+
+// Custom styles for react-select to make it transparent
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'transparent',
+    border: '1px solid rgb(147 197 253)', // border-blue-300
+    borderRadius: '8px',
+    boxShadow: state.isFocused ? '0 0 0 2px rgb(59 130 246)' : 'none', // focus:ring-blue-500
+    '&:hover': {
+      border: '1px solid rgb(147 197 253)',
+    },
+    backdropFilter: 'blur(4px)',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(147, 197, 253, 0.5)',
+    borderRadius: '8px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected 
+      ? 'rgba(59, 130, 246, 0.9)' 
+      : state.isFocused 
+        ? 'rgba(59, 130, 246, 0.5)' 
+        : 'transparent',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'rgba(255, 255, 255, 0.7)',
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(147, 197, 253, 0.5)',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: 'rgba(147, 197, 253, 0.8)',
+    '&:hover': {
+      color: 'rgb(147, 197, 253)',
+    },
+  }),
+};
 
 const ImageCompressor = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -156,31 +215,32 @@ const ImageCompressor = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-lg font-medium mb-2">Preset</label>
-                <select
-                  value={preset}
-                  onChange={(e) => handlePresetChange(e.target.value)}
-                  className="w-full p-3 rounded-lg bg-white/20 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                >
-                  <option value="custom">Custom</option>
-                  <option value="web">Web</option>
-                  <option value="mobile">Mobile</option>
-                  <option value="thumbnail">Thumbnail</option>
-                  <option value="social">Social Media</option>
-                  <option value="print">Print</option>
-                </select>
+                <Select
+                  options={Object.keys(presets).map(preset => ({ value: preset, label: preset }))}
+                  value={{ value: preset, label: preset }}
+                  onChange={(selectedOption) => handlePresetChange(selectedOption.value)}
+                  styles={customSelectStyles}
+                  placeholder="Select preset"
+                  isSearchable={false}
+                  isClearable={false}
+                />
               </div>
 
               <div>
                 <label className="block text-lg font-medium mb-2">Output Format</label>
-                <select
-                  value={format}
-                  onChange={(e) => setFormat(e.target.value)}
-                  className="w-full p-3 rounded-lg bg-white/20 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                >
-                  <option value="jpeg">JPEG</option>
-                  <option value="png">PNG</option>
-                  <option value="webp">WebP</option>
-                </select>
+                <Select
+                  options={[
+                    { value: 'jpeg', label: 'JPEG' },
+                    { value: 'png', label: 'PNG' },
+                    { value: 'webp', label: 'WebP' },
+                  ]}
+                  value={{ value: format, label: format.toUpperCase() }}
+                  onChange={(selectedOption) => setFormat(selectedOption.value)}
+                  styles={customSelectStyles}
+                  placeholder="Select format"
+                  isSearchable={false}
+                  isClearable={false}
+                />
               </div>
             </div>
 

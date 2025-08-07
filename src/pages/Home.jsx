@@ -33,7 +33,7 @@ const Home = () => {
         <div className="relative w-full lg:w-1/2 h-96 md:h-[500px] flex items-center justify-center p-4">
           {/* Central Element */}
           <div className="relative z-10 text-white text-center">
-            <h2 className="text-5xl md:text-7xl font-bold">14+</h2>
+            <h2 className="text-5xl md:text-7xl font-bold">8+</h2>
             <p className="text-xl md:text-2xl text-purple-200">Daily Tools</p>
           </div>
 

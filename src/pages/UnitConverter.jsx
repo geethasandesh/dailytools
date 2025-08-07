@@ -1,4 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+
+// Custom styles for react-select to make it transparent
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'transparent',
+    border: '1px solid rgba(59, 130, 246, 0.5)', // border-blue-400/50
+    borderRadius: '12px',
+    boxShadow: state.isFocused ? '0 0 0 2px rgb(59 130 246)' : 'none', // focus:ring-blue-500
+    '&:hover': {
+      border: '1px solid rgba(59, 130, 246, 0.5)',
+    },
+    backdropFilter: 'blur(4px)',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(59, 130, 246, 0.5)',
+    borderRadius: '12px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected 
+      ? 'rgba(59, 130, 246, 0.9)' 
+      : state.isFocused 
+        ? 'rgba(59, 130, 246, 0.5)' 
+        : 'transparent',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: 'rgba(59, 130, 246, 0.7)',
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'rgba(255, 255, 255, 0.7)',
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: 'rgba(59, 130, 246, 0.8)',
+    '&:hover': {
+      color: 'rgb(59, 130, 246)',
+    },
+  }),
+};
 
 const UnitConverter = () => {
   const [category, setCategory] = useState('length');
@@ -98,42 +157,40 @@ const UnitConverter = () => {
         <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
           <div className="mb-6">
             <label className="block text-lg font-semibold text-white mb-2">Category</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
-            >
-              {Object.entries(categories).map(([key, { name }]) => (
-                <option key={key} value={key}>{name}</option>
-              ))}
-            </select>
+            <Select
+              options={Object.keys(categories).map(cat => ({ value: cat, label: categories[cat].name }))}
+              value={{ value: category, label: categories[category].name }}
+              onChange={(selectedOption) => setCategory(selectedOption.value)}
+              styles={customSelectStyles}
+              placeholder="Select category"
+              isSearchable={false}
+              isClearable={false}
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-lg font-semibold text-white mb-2">From</label>
-              <select
-                value={fromUnit}
-                onChange={(e) => setFromUnit(e.target.value)}
-                className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
-              >
-                <option value="">Select unit</option>
-                {categories[category].units.map((unit) => (
-                  <option key={unit} value={unit}>{unit}</option>
-                ))}
-              </select>
+              <Select
+                options={categories[category] ? categories[category].units.map(unit => ({ value: unit, label: unit })) : []}
+                value={{ value: fromUnit, label: fromUnit }}
+                onChange={(selectedOption) => setFromUnit(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select unit"
+                isSearchable={false}
+                isClearable={false}
+              />
             </div>
             <div>
               <label className="block text-lg font-semibold text-white mb-2">To</label>
-              <select
-                value={toUnit}
-                onChange={(e) => setToUnit(e.target.value)}
-                className="w-full p-2 border border-blue-400/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/5 text-white"
-              >
-                <option value="">Select unit</option>
-                {categories[category].units.map((unit) => (
-                  <option key={unit} value={unit}>{unit}</option>
-                ))}
-              </select>
+              <Select
+                options={categories[category] ? categories[category].units.map(unit => ({ value: unit, label: unit })) : []}
+                value={{ value: toUnit, label: toUnit }}
+                onChange={(selectedOption) => setToUnit(selectedOption.value)}
+                styles={customSelectStyles}
+                placeholder="Select unit"
+                isSearchable={false}
+                isClearable={false}
+              />
             </div>
           </div>
           <div className="mb-6">
