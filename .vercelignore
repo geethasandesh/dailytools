@@ -1,27 +1,10 @@
-# Ignore backend (FastAPI) related files
+# Ignore backend since it’s deployed separately
 backend/
+
+# Ignore configs and files not needed in frontend build
 Dockerfile
-requirements.txt
 railway.toml
-Procfile
-setup_backend.py
-modnet_api.py
-
-
-# Ignore Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Ignore build artifacts
-dist/
-*.egg-info/
-
-# Ignore node modules (Vercel installs fresh)
-node_modules/
-
-# Ignore local environment files
-.env
-.env.local
-.env.*.local
+requirements.txt
+*.py
+*.md
+*.log

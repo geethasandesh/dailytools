@@ -9,6 +9,14 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',
     },
+    proxy: {
+      // 👇 Proxy only in dev — keeps API calls working locally
+      '/api': {
+        target: 'http://localhost:8000', // your Railway backend when running locally
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   optimizeDeps: {
     exclude: ['worker.js'],
@@ -17,5 +25,12 @@ export default defineConfig({
     rollupOptions: {
       external: [],
     },
+  },
+  define: {
+    __API_URL__: JSON.stringify(
+      process.env.NODE_ENV === 'production'
+        ? 'https://dailytools-backend-production.up.railway.app/' // Railway backend
+        : 'http://localhost:8000'
+    ),
   },
 })
