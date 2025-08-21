@@ -1,5 +1,9 @@
+setuptools>=65.0.0
 fastapi==0.104.1
 uvicorn==0.24.0
 rembg==2.0.67
 Pillow==10.1.0
-python-multipart==0.0.6 
+python-multipart==0.0.6
+onnxruntime==1.21.0
+opencv-python==4.8.1.78
+numpy<2.0.0 

@@ -6,7 +6,7 @@ import parserPostcss from 'prettier/parser-postcss';
 import beautify from 'js-beautify';
 import vkbeautify from 'vkbeautify';
 import DiffViewer from 'react-diff-viewer';
-import Select from 'react-select';
+import Select from 'react-select'; 
 
 // Custom styles for react-select to make it transparent
 const customSelectStyles = {
@@ -250,8 +250,7 @@ const CodeFormatter = () => {
                     onClick={() => {
                       navigator.clipboard.writeText(formattedCode);
                     }}
-                    className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700"
-                  >
+                    className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700">
                     Copy to Clipboard
                   </button>
                 </div>
