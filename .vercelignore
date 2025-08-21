@@ -5,6 +5,8 @@ requirements.txt
 railway.toml
 Procfile
 setup_backend.py
+modnet_api.py
+
 
 # Ignore Python cache
 __pycache__/
