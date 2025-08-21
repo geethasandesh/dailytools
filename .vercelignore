@@ -1,0 +1,25 @@
+# Ignore backend (FastAPI) related files
+backend/
+Dockerfile
+requirements.txt
+railway.toml
+Procfile
+setup_backend.py
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore build artifacts
+dist/
+*.egg-info/
+
+# Ignore node modules (Vercel installs fresh)
+node_modules/
+
+# Ignore local environment files
+.env
+.env.local
+.env.*.local
