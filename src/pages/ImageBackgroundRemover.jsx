@@ -82,13 +82,24 @@ const ImageBackgroundRemover = () => {
 
   const checkBackendStatus = async () => {
     try {
-      const res = await fetch(`${API_BASE}/health`);
+      console.log('Checking backend at:', `${API_BASE}/health`);
+      const res = await fetch(`${API_BASE}/health`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+      console.log('Backend response status:', res.status);
       if (res.ok) {
+        const data = await res.json();
+        console.log('Backend data:', data);
         setBackendStatus('online');
       } else {
+        console.error('Backend error:', res.status, res.statusText);
         setBackendStatus('offline');
       }
-    } catch {
+    } catch (error) {
+      console.error('Backend connection failed:', error);
       setBackendStatus('offline');
     }
   };
@@ -136,6 +147,7 @@ const ImageBackgroundRemover = () => {
     formData.append('quality', quality);
 
     try {
+      console.log('Sending request to:', `${API_BASE}/remove-background`);
       const res = await fetch(`${API_BASE}/remove-background`, {
         method: 'POST',
         body: formData,
