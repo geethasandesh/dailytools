@@ -1,5 +1,6 @@
-# Ignore backend since it’s deployed separately
+# Ignore backend since it's deployed separately
 backend/
+__pycache__/
 
 # Ignore configs and files not needed in frontend build
 Dockerfile
@@ -8,3 +9,6 @@ requirements.txt
 *.py
 *.md
 *.log
+*.pyc
+MODNET_INTEGRATION.md
+BACKEND_SETUP.md
