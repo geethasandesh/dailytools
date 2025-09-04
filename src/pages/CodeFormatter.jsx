@@ -5,7 +5,7 @@ import parserHtml from 'prettier/parser-html';
 import parserPostcss from 'prettier/parser-postcss';
 import beautify from 'js-beautify';
 import vkbeautify from 'vkbeautify';
-import DiffViewer from 'react-diff-viewer';
+
 import Select from 'react-select'; 
 
 // Custom styles for react-select to make it transparent
@@ -335,33 +335,19 @@ const CodeFormatter = () => {
                 <label className="block text-lg font-semibold text-white mb-2">
                   Code Difference
                 </label>
-                <div className="rounded-xl overflow-x-auto bg-white/5 border border-blue-400/50">
-                  <DiffViewer
-                    oldValue={codeA}
-                    newValue={codeB}
-                    splitView={true}
-                    showDiffOnly={false}
-                    leftTitle="Code A"
-                    rightTitle="Code B"
-                    styles={{
-                      variables: {
-                        light: {
-                          diffViewerBackground: '#f3f4f6',
-                          addedBackground: '#bbf7d0',
-                          removedBackground: '#fecaca',
-                        },
-                        dark: {
-                          diffViewerBackground: '#18181b',
-                          addedBackground: '#166534',
-                          removedBackground: '#7f1d1d',
-                        },
-                      },
-                      diffContainer: { background: 'transparent' },
-                      lineNumber: { color: '#a5b4fc' },
-                      contentText: { color: '#fff' },
-                      gutter: { background: 'transparent' },
-                    }}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-white font-semibold mb-2">Code A</h3>
+                    <pre className="w-full p-3 font-mono text-sm bg-white/5 border border-blue-400/50 rounded-xl overflow-x-auto text-white h-64">
+                      {codeA}
+                    </pre>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold mb-2">Code B</h3>
+                    <pre className="w-full p-3 font-mono text-sm bg-white/5 border border-blue-400/50 rounded-xl overflow-x-auto text-white h-64">
+                      {codeB}
+                    </pre>
+                  </div>
                 </div>
               </div>
             </>

@@ -22,8 +22,16 @@ export default defineConfig({
     exclude: ['worker.js'],
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      external: [],
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ffmpeg: ['@ffmpeg/ffmpeg', '@ffmpeg/core', '@ffmpeg/util'],
+          pdf: ['pdf-lib', 'pdfjs-dist'],
+          utils: ['prettier', 'js-beautify', 'vkbeautify']
+        }
+      }
     },
   },
   define: {
