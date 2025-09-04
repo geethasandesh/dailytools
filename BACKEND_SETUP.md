@@ -11,7 +11,7 @@ pip install fastapi uvicorn rembg Pillow python-multipart
 ## **Step 2: Start the Backend Server**
 ```bash
 cd backend
-python app.py
+python modnet_api.py
 ```
 
 **OR** use the setup script:
