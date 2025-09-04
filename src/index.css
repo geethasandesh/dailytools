@@ -2,9 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom gradient background */
-.bg-radial-gradient {
-  background: radial-gradient(ellipse at center, #1e3a8a 0%, #1e1b4b 50%, #0f172a 100%);
+/* Space gradient background */
+.bg-space-gradient {
+  background: linear-gradient(135deg, #000000 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #000000 100%);
+  position: relative;
+}
+
+/* White Stars */
+.star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #ffffff;
+  animation: twinkle 4s infinite;
+}
+
+.star-1 { width: 1px; height: 1px; top: 8%; left: 15%; animation-delay: 0s; }
+.star-2 { width: 2px; height: 2px; top: 12%; left: 85%; animation-delay: 1s; }
+.star-3 { width: 1px; height: 1px; top: 25%; left: 5%; animation-delay: 2s; }
+.star-4 { width: 1px; height: 1px; top: 35%; left: 95%; animation-delay: 0.5s; }
+.star-5 { width: 2px; height: 2px; top: 18%; left: 65%; animation-delay: 1.5s; }
+.star-6 { width: 1px; height: 1px; top: 55%; left: 10%; animation-delay: 2.5s; }
+.star-7 { width: 1px; height: 1px; top: 65%; left: 90%; animation-delay: 0.8s; }
+.star-8 { width: 2px; height: 2px; top: 75%; left: 20%; animation-delay: 1.8s; }
+.star-9 { width: 1px; height: 1px; top: 22%; left: 50%; animation-delay: 0.3s; }
+.star-10 { width: 1px; height: 1px; top: 42%; left: 78%; animation-delay: 2.3s; }
+.star-11 { width: 2px; height: 2px; top: 48%; left: 3%; animation-delay: 1.3s; }
+.star-12 { width: 1px; height: 1px; top: 68%; left: 97%; animation-delay: 0.7s; }
+.star-13 { width: 1px; height: 1px; top: 78%; left: 58%; animation-delay: 2.7s; }
+.star-14 { width: 2px; height: 2px; top: 88%; left: 73%; animation-delay: 1.7s; }
+.star-15 { width: 1px; height: 1px; top: 3%; left: 38%; animation-delay: 0.9s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 /* Custom scrollbar */
@@ -130,4 +161,31 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Orbital animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 30s linear infinite;
 }

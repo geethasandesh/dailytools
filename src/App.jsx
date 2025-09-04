@@ -6,7 +6,7 @@ import AppRoutes from './routes/Routes';
 const App = () => {
   return (
     <Router>
-      <div className="min-h-screen bg-radial-gradient flex flex-col">
+      <div className="min-h-screen bg-space-gradient flex flex-col">
         <Navbar />
         <main className="flex-grow">
           <AppRoutes />
