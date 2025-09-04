@@ -4,7 +4,7 @@ import Select from 'react-select';
 // ✅ Dynamic API base: Local when dev, Railway when deployed
 const API_BASE =
   import.meta.env.MODE === 'production'
-    ? 'https://dailytools-backend-production.up.railway.app/' // 🔥 Replace with your Railway backend URL
+    ? 'https://dailytools-backend-production.up.railway.app'
     : 'http://127.0.0.1:8000';
 
 // Custom styles for react-select to make it transparent
