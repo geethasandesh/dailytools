@@ -4,6 +4,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import GlitchText from '../components/GlitchText';
 import Tools from './Tools'; // Import the Tools component
+import Features from './Features';
+import Stats from './Stats';
 import Footer from '../components/Footer'; // Import the Footer component
 
 const Home = () => {
@@ -84,9 +86,10 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* Render the Tools component below the hero section */}
+      {/* Render additional sections */}
+      <Features />
+      <Stats />
       <Tools />
-      {/* Render the Footer component only on the Home page */}
       <Footer />
     </div>
   );
