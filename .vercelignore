@@ -1,14 +1,21 @@
-# Ignore backend since it's deployed separately
+# Backend files (deployed separately on Railway)
 backend/
 __pycache__/
 
-# Ignore configs and files not needed in frontend build
-Dockerfile
-railway.toml
-requirements.txt
+# Python files
 *.py
-*.md
-*.log
 *.pyc
+requirements.txt
+
+# Documentation
+*.md
 MODNET_INTEGRATION.md
 BACKEND_SETUP.md
+
+# Config files
+Dockerfile
+railway.toml
+Procfile
+
+# Logs
+*.log
