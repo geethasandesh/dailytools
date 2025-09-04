@@ -68,10 +68,10 @@ const About = () => {
         </div>
 
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Ready to get started?</h2>
+          <h2 className="text-lg font-medium text-white mb-4">Ready to get started?</h2>
           <a
             href="/tools"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full font-medium text-base hover:bg-white/20 transition-all duration-200 shadow-lg"
           >
             Explore Tools <span className="ml-2">→</span>
           </a>

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Select from 'react-select';
+import { validateFile, formatFileSize } from '../../utils/fileValidation';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 // ✅ Dynamic API base: Local when dev, Railway when deployed
 const API_BASE =
@@ -127,11 +129,14 @@ const ImageBackgroundRemover = () => {
     setError(null);
     setProcessedImage(null);
     const file = event.target.files[0];
-    if (file && file.size < 10 * 1024 * 1024) {
-      setSelectedFile(file);
-    } else {
-      setError('File too large or not supported.');
+    
+    const validation = validateFile(file, 'image');
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
     }
+    
+    setSelectedFile(file);
   };
 
   const processImage = async () => {
@@ -182,18 +187,22 @@ const ImageBackgroundRemover = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <h2 className="text-3xl font-bold text-white mb-6">Image Background Remover</h2>
-      <div className="mb-4">
-        <span
-          className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-            backendStatus === 'online' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-          }`}
-        >
-          Backend: {backendStatus}
-        </span>
-      </div>
-      {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white mb-4">Image Background Remover</h1>
+          <p className="text-base text-purple-200">Remove backgrounds from images using advanced AI models</p>
+        </div>
+        <div className="mb-6 text-center">
+          <span
+            className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+              backendStatus === 'online' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'
+            }`}
+          >
+            Backend: {backendStatus}
+          </span>
+        </div>
+        {error && <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-300 rounded-xl text-sm">{error}</div>}
 
       {/* File Upload */}
       {!selectedFile && (
@@ -307,14 +316,14 @@ const ImageBackgroundRemover = () => {
         {selectedFile && !isProcessing && (
           <>
             <button
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl font-medium text-sm hover:bg-white/20 transition-all duration-200"
               onClick={processImage}
               disabled={isProcessing}
             >
               Remove Background
             </button>
             <button
-              className="px-6 py-2 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition"
+              className="px-5 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 text-white rounded-xl font-medium text-sm hover:bg-white/10 transition-all duration-200"
               onClick={resetImage}
               disabled={isProcessing}
             >
@@ -324,12 +333,13 @@ const ImageBackgroundRemover = () => {
         )}
         {processedImage && !isProcessing && (
           <button
-            className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+            className="px-5 py-2.5 bg-green-500/20 backdrop-blur-sm border border-green-500/30 text-green-300 rounded-xl font-medium text-sm hover:bg-green-500/30 transition-all duration-200"
             onClick={downloadImage}
           >
             Download
           </button>
         )}
+        </div>
       </div>
     </div>
   );

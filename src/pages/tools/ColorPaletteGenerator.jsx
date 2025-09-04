@@ -155,15 +155,20 @@ const ColorPaletteGenerator = () => {
   }, [palette, gradientType]);
 
   return (
-    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-white mb-12">
-          Color Palette & Gradient Generator
-        </h1>
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+            Color Palette & Gradient Generator
+          </h1>
+          <p className="text-base text-purple-200">
+            Generate beautiful color palettes for your designs
+          </p>
+        </div>
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-lg font-semibold text-white mb-2">Base Color</label>
+              <label className="block text-base font-medium text-white mb-3">Base Color</label>
               <div className="flex items-center space-x-4">
                 <input
                   type="color"
@@ -180,7 +185,7 @@ const ColorPaletteGenerator = () => {
               </div>
             </div>
             <div>
-              <label className="block text-lg font-semibold text-white mb-2">Palette Type</label>
+              <label className="block text-base font-medium text-white mb-3">Palette Type</label>
               <Select
                 options={[
                   { value: 'monochromatic', label: 'Monochromatic' },
@@ -202,14 +207,14 @@ const ColorPaletteGenerator = () => {
           <div className="mb-6">
             <button
               onClick={generatePalette}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl font-semibold text-lg shadow-lg hover:from-purple-700 hover:to-blue-700"
+              className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl font-medium text-sm hover:bg-white/20 transition-all duration-200"
             >
               Generate Palette
             </button>
           </div>
           {palette.length > 0 && (
             <div className="mt-8">
-              <h2 className="text-2xl font-bold text-white mb-4">Generated Palette</h2>
+              <h2 className="text-lg font-medium text-white mb-4">Generated Palette</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {palette.map((color, index) => (
                   <div
@@ -255,9 +260,9 @@ const ColorPaletteGenerator = () => {
           {/* Gradient Generator */}
           {palette.length > 1 && (
             <div className="mt-12">
-              <h2 className="text-2xl font-bold text-white mb-4">Gradient Generator</h2>
+              <h2 className="text-lg font-medium text-white mb-4">Gradient Generator</h2>
               <div className="mb-4">
-                <label className="block text-lg font-semibold text-white mb-2">Gradient Type</label>
+                <label className="block text-base font-medium text-white mb-3">Gradient Type</label>
                 <Select
                   options={[
                     { value: 'linear', label: 'Linear' },

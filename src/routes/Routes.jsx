@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Tools from '../pages/Tools';
 import About from '../pages/About';
+import TermsAndConditions from '../pages/TermsAndConditions';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 import QrGenerator from '../pages/tools/QrGenerator';
 import UrlQrGenerator from '../components/qr-types/UrlQrGenerator';
 import WhatsAppQrGenerator from '../components/qr-types/WhatsAppQrGenerator';
@@ -19,6 +21,8 @@ import ImageCompressor from '../pages/tools/ImageCompressor';
 import CodeFormatter from '../pages/tools/CodeFormatter';
 import ColorPaletteGenerator from '../pages/tools/ColorPaletteGenerator';
 import UnitConverter from '../pages/tools/UnitConverter';
+import HashGenerator from '../pages/tools/HashGenerator';
+import Base64Converter from '../pages/tools/Base64Converter';
 
 const AppRoutes = () => {
   return (
@@ -26,6 +30,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/tools" element={<Tools />} />
       <Route path="/about" element={<About />} />
+      <Route path="/terms" element={<TermsAndConditions />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/qr-generator" element={<QrGenerator />} />
       <Route path="/qr-generator/url" element={<UrlQrGenerator />} />
       <Route path="/qr-generator/whatsapp" element={<WhatsAppQrGenerator />} />
@@ -42,6 +48,9 @@ const AppRoutes = () => {
       <Route path="/code-formatter" element={<CodeFormatter />} />
       <Route path="/color-palette-generator" element={<ColorPaletteGenerator />} />
       <Route path="/unit-converter" element={<UnitConverter />} />
+      <Route path="/tools/unit-converter" element={<UnitConverter />} />
+      <Route path="/tools/hash-generator" element={<HashGenerator />} />
+      <Route path="/tools/base64-converter" element={<Base64Converter />} />
     </Routes>
   );
 };

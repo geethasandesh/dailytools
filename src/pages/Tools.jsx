@@ -10,7 +10,9 @@ const Tools = () => {
     { name: 'PDF to Word', path: '/pdf-to-word', icon: '📄', description: 'Convert PDF documents to editable Word files.' },
     { name: 'Code Formatter', path: '/code-formatter', icon: '💻', description: 'Format code for various programming languages.' },
     { name: 'Color Palette Generator', path: '/color-palette-generator', icon: '🎨', description: 'Generate beautiful color palettes for your designs.' },
-    { name: 'Unit Converter', path: '/unit-converter', icon: '📏', description: 'Convert between different units of measurement.' },
+    { name: 'Unit Converter', path: '/tools/unit-converter', icon: '📏', description: 'Convert between different units of measurement.' },
+    { name: 'Hash Generator', path: '/tools/hash-generator', icon: '🔐', description: 'Generate MD5, SHA-1, SHA-256, and SHA-512 hashes.' },
+    { name: 'Base64 Converter', path: '/tools/base64-converter', icon: '🔤', description: 'Encode and decode Base64 strings.' },
   ];
 
   return (

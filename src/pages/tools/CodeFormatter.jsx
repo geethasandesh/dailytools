@@ -157,11 +157,16 @@ const CodeFormatter = () => {
   };
 
   return (
-    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-white mb-12">
-          Code Formatter & Comparison
-        </h1>
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+            Code Formatter & Comparison
+          </h1>
+          <p className="text-base text-purple-200">
+            Format code for various programming languages
+          </p>
+        </div>
         <div className="mb-8 flex justify-center gap-4">
           <button
             className={`px-6 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg ${tab === 'format' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
@@ -176,7 +181,7 @@ const CodeFormatter = () => {
             Compare
           </button>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           {tab === 'format' && (
             <>
               <div className="mb-6">

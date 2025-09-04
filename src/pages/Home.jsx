@@ -17,15 +17,15 @@ const Home = () => {
       <div className="relative z-0 flex flex-col lg:flex-row items-center justify-center min-h-screen">
         {/* Left Section - Text Content */}
         <div className="lg:w-1/2 text-white text-center lg:text-left mb-12 lg:mb-0 lg:pr-12 p-4 lg:pl-12">
-          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-wide">
+          <h1 className="text-3xl md:text-5xl font-semibold leading-tight mb-6">
             Unlock Top  <br /> Daily Tools <br /> One Click Away!
           </h1>
-          <p className="text-xl md:text-2xl text-purple-200 mb-8">
+          <p className="text-base md:text-lg text-purple-200 mb-8">
             Your complete toolkit for everyday tasks, powered by modern technology.
           </p>
           <Link
             to="/tools"
-            className="inline-flex items-center px-8 py-4 bg-purple-700 text-white rounded-full font-semibold text-lg hover:bg-purple-600 transition-colors shadow-lg"
+            className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full font-medium text-base hover:bg-white/20 transition-all duration-200 shadow-lg"
           >
             Start Using Tools <span className="ml-2">→</span>
           </Link>
@@ -35,8 +35,8 @@ const Home = () => {
         <div className="relative w-full lg:w-1/2 h-96 md:h-[500px] flex items-center justify-center p-4">
           {/* Central Element */}
           <div className="relative z-10 text-white text-center">
-            <h2 className="text-5xl md:text-7xl font-bold">8</h2>
-            <p className="text-xl md:text-2xl text-purple-200">Daily Tools</p>
+            <h2 className="text-4xl md:text-5xl font-semibold">8</h2>
+            <p className="text-base md:text-lg text-purple-200">Daily Tools</p>
           </div>
 
           {/* Stars Background */}

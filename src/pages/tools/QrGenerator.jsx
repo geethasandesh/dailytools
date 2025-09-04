@@ -60,29 +60,31 @@ const QrGenerator = () => {
 
   return (
     <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-4xl font-extrabold text-center text-white mb-12">
-        QR Code Generator
-      </h2>
+      <div className="text-center mb-12">
+        <h1 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+          QR Code Generator
+        </h1>
+        <p className="text-base text-purple-200">
+          Generate QR codes for various purposes
+        </p>
+      </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
         {qrTypes.map((qrType) => (
           <Link
             key={qrType.name}
             to={qrType.path}
-            className={`relative flex flex-col items-center justify-between p-6 bg-white/10 backdrop-blur-md rounded-3xl shadow-xl transition-all duration-300 transform hover:-translate-y-2 group border border-blue-400
-              ${qrType.type === 'phone-mockup' ? 'min-h-[300px] row-span-2 flex-col justify-center' : 'h-40 flex-row items-center'}
-            `}
+            className="relative flex items-center justify-between p-5 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-200 group"
           >
             <div className="flex items-center space-x-2 w-full justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-4xl">{qrType.icon}</span>
-                <h3 className="text-lg font-semibold text-white">
+                <span className="text-2xl">{qrType.icon}</span>
+                <h3 className="text-base font-medium text-white">
                   {qrType.name}
                 </h3>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="text-gray-400 text-sm">?</span>
-                <span className="text-purple-600 text-xl font-bold">→</span>
+                <span className="text-purple-300 text-lg">→</span>
               </div>
             </div>
             {qrType.type === 'phone-mockup' && (

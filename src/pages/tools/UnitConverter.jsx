@@ -151,12 +151,17 @@ const UnitConverter = () => {
   }
 
   return (
-    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-white mb-12">Unit Converter</h1>
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-blue-400">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white mb-4">Unit Converter</h1>
+          <p className="text-base text-purple-200">
+            Convert between different units of measurement
+          </p>
+        </div>
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
           <div className="mb-6">
-            <label className="block text-lg font-semibold text-white mb-2">Category</label>
+            <label className="block text-base font-medium text-white mb-3">Category</label>
             <Select
               options={Object.keys(categories).map(cat => ({ value: cat, label: categories[cat].name }))}
               value={{ value: category, label: categories[category].name }}
@@ -169,7 +174,7 @@ const UnitConverter = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-lg font-semibold text-white mb-2">From</label>
+              <label className="block text-base font-medium text-white mb-3">From</label>
               <Select
                 options={categories[category] ? categories[category].units.map(unit => ({ value: unit, label: unit })) : []}
                 value={{ value: fromUnit, label: fromUnit }}
@@ -181,7 +186,7 @@ const UnitConverter = () => {
               />
             </div>
             <div>
-              <label className="block text-lg font-semibold text-white mb-2">To</label>
+              <label className="block text-base font-medium text-white mb-3">To</label>
               <Select
                 options={categories[category] ? categories[category].units.map(unit => ({ value: unit, label: unit })) : []}
                 value={{ value: toUnit, label: toUnit }}
@@ -194,7 +199,7 @@ const UnitConverter = () => {
             </div>
           </div>
           <div className="mb-6">
-            <label className="block text-lg font-semibold text-white mb-2">Value</label>
+            <label className="block text-base font-medium text-white mb-3">Value</label>
             <input
               type="number"
               value={value}
@@ -206,14 +211,14 @@ const UnitConverter = () => {
           <button
             onClick={convert}
             disabled={!fromUnit || !toUnit || !value}
-            className={`w-full mt-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-2xl font-semibold text-lg shadow-lg transition-all duration-300 hover:from-purple-700 hover:to-blue-700 ${!fromUnit || !toUnit || !value ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full mt-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl font-medium text-sm hover:bg-white/20 transition-all duration-200 ${!fromUnit || !toUnit || !value ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Convert
           </button>
           {result && (
-            <div className="mt-8 p-6 bg-white/10 rounded-2xl border border-blue-400/50 text-white">
-              <h2 className="text-xl font-bold mb-2">Result</h2>
-              <p className="text-lg">{result}</p>
+            <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10 text-white">
+              <h2 className="text-base font-medium mb-2">Result</h2>
+              <p className="text-sm">{result}</p>
             </div>
           )}
         </div>

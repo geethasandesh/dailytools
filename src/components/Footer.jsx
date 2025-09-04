@@ -18,33 +18,35 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-black text-white py-5 mt-auto">
+    <footer className="bg-black/20 backdrop-blur-sm border-t border-white/10 text-white py-8 mt-auto">
       <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Daily Tools</h3>
-            <p className="text-gray-400 text-sm">
+            <h3 className="text-lg font-medium mb-3">Daily Tools</h3>
+            <p className="text-gray-300 text-sm">
               Your comprehensive suite of online tools for everyday tasks.
             </p>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+            <h3 className="text-lg font-medium mb-3">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/tools" className="text-gray-400 hover:text-white transition-colors">All Tools</Link></li>
-              {/* Add other general links like About, Contact, etc. if needed */}
+              <li><Link to="/" className="text-gray-300 hover:text-white transition-colors text-sm">Home</Link></li>
+              <li><Link to="/tools" className="text-gray-300 hover:text-white transition-colors text-sm">All Tools</Link></li>
+              <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors text-sm">About</Link></li>
+              <li><Link to="/terms" className="text-gray-300 hover:text-white transition-colors text-sm">Terms</Link></li>
+              <li><Link to="/privacy" className="text-gray-300 hover:text-white transition-colors text-sm">Privacy</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold mb-4">Tools</h3>
+            <h3 className="text-lg font-medium mb-3">Tools</h3>
             <div className="grid grid-cols-2 gap-2">
               {allTools.map((tool) => (
                 <Link
                   key={tool.path}
                   to={tool.path}
-                  className="text-gray-400 hover:text-white transition-colors text-sm"
+                  className="text-gray-300 hover:text-white transition-colors text-xs"
                 >
                   {tool.name}
                 </Link>
@@ -53,7 +55,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-0 text-center text-gray-500 text-sm">
+        <div className="border-t border-white/10 pt-6 text-center text-gray-400 text-xs">
           © {new Date().getFullYear()} Daily Tools. All rights reserved.
         </div>
       </div>
